@@ -1,8 +1,55 @@
 #! /bin/bash
 #默认硬盘设置为/dev/sdb. 有想作死的也可以改成sda
-disk=/dev/sdb
-yum install -y psmisc
 
+set -- `getopt  y "$@"`
+
+#如果有选项则根据选项来操作
+while [ -n $1 ]
+do
+		case "$1" in 
+		-y) echo "静默允许删除操作"
+			confirm=y;;
+		--) shift
+				break;;
+		*) echo "$1 没有这个选项";;
+		esac
+		shift
+done
+
+#排除掉选项后如果仍有参数则为路径
+if [ $1 ];then
+		disk=$1
+else
+		disk=/dev/sdb
+fi
+
+if [ -e $disk ];then
+		#这里说明找到了这个路径,不过也没啥好做的
+		#pass
+		echo "找到$disk 文件,下一步"
+else
+		echo "未找到$disk 这个路径.取消操作(ERROR  1)"
+		exit 1
+fi
+
+echo "此程序将会删除$disk 下的所有数据,请键入[y/n]来继续操作"
+if [ "$confirm"x = "y"x  ];then
+		echo "静默模式, skip input"
+else
+		read -n 1 -p "It's FORMAT $disk DELETE ALL DATA now! press [y/n] to continue!" confirm
+fi
+
+
+if [  "$confirm"x = "y"x ];then 
+		echo "FORMAT $disk ALL DATA ,正在删除该目录下所有数据并格式化"
+else
+		echo "cancel. 取消操作.(ERROR 2)"
+		exit 2 
+fi
+
+
+
+yum install -y psmisc
 
 for partion in `ls $disk*`
 do
