@@ -74,7 +74,10 @@ do
 				#备份 /etc/fstab 后,注释掉带lvmpath的一行. 避免重启挂掉
 				echo y|cp /etc/fstab /etc/fstab.bak
 				#给这一行加注释
-				sed -i "s/^$lvmpath/#&/" /etc/fstab
+				tmp=`echo $lvmpath | sed 's|\/|\\\/|g'`
+				sed -i "s|^$tmp|#&|" /etc/fstab				
+
+				#sed -i "s/^$lvmpath/#&/" /etc/fstab
 				#后期弃用fstab作为开机挂载方式. 改用开机自启动的脚本来使用mount命令
 			fi
 			
@@ -91,7 +94,9 @@ do
 	echo y|pvremove $partion
 	echo y|mkfs.ext4  $partion
 	wipefs -af $partion
-	sed -i "s/^$partion/#&/" /etc/fstab
+	#sed -i "s/^$partion/#&/" /etc/fstab
+	tmp=`echo $partion |sed 's|\/|\\\/|g'`
+        sed -i "s|^$tmp|#&|" /etc/fstab	
 
 done
 
