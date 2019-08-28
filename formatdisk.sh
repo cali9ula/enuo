@@ -54,7 +54,7 @@ fi
 
 #yum install -y psmisc
 
-for partion in `ls $disk*`
+for partion in `ls $disk?`
 do
 	if [ $partion  ]
 	then 
@@ -93,11 +93,14 @@ do
 			
 		fi
 		echo y|vgremove $vgpth
+		echo y|pvremove $partion
 	fi
-	echo y|pvremove $partion
+	fuser -km $partion
+	umount $partion
+	#echo y|pvremove $partion
+		
 	echo y|mkfs.ext4  $partion
 	wipefs -af $partion
-	#sed -i "s/^$partion/#&/" /etc/fstab
 	tmp=`echo $partion |sed 's|\/|\\\/|g'`
         sed -i "s|^$tmp|#&|" /etc/fstab	
 
