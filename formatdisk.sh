@@ -47,9 +47,12 @@ else
 		exit 2 
 fi
 
+fuser -v >/dev/null 
+if [ $? -eq 127 ];then
+	yum install -y psmisc
+fi
 
-
-yum install -y psmisc
+#yum install -y psmisc
 
 for partion in `ls $disk*`
 do
