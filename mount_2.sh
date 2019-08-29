@@ -2,6 +2,17 @@
 #这个脚本预设前面的所有事情已经搞定. 只看最终结果有没有完成来回报输出
 #! /bin/bash
 
+
+
+set -- `getopt  y "$@"`
+#y 无需确认
+#d disk 硬盘
+#p path 挂载的路径
+#v vgname
+#l lvname
+
+
+
 disk=/dev/sdb
 #if /www已经存在 需要询问是否覆盖
 dir=/www
