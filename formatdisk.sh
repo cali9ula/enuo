@@ -54,7 +54,7 @@ fi
 
 #yum install -y psmisc
 
-for partion in `ls $disk?`
+for partion in `ls $disk*|sort -r `
 do
 	if [ $partion  ]
 	then 
