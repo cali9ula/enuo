@@ -4,22 +4,92 @@
 
 
 
-set -- `getopt  y "$@"`
+set -- `getopt  yd:v:l: "$@"`
 #y 无需确认
 #d disk 硬盘
 #p path 挂载的路径
 #v vgname
 #l lvname
 
+while [ -n "$1"  ]
+do
+	
+	case "$1" in 
+	-y) echo "静默模式";;
+	-d) echo "disk磁盘-> $2"
+		disk=$2
+		shift;;
+	#-p) echo "path挂载路径-> $2"
+	#	shift;;
+	-v) echo "vgname vg名 -> $2"
+		vgname=$2
+		shift;;
+	-l) echo "lvname lv名 -> $2"
+		lvname=$2
+		shift;;
+	--)shift
+		break;;
+
+	*) echo "$1 不是选项"
+	esac
+	shift
+	
+done
 
 
-disk=/dev/sdb
-#if /www已经存在 需要询问是否覆盖
-dir=/www
 
-vgname=vgspace
-lvname=lvspace
+
+
+if [ $disk  ];then
+	disk=$disk
+	echo "[已选]"
+else
+	disk=/dev/sdb
+	echo "[默认]"
+fi
+echo "操作的硬盘为$disk"
+
+
+if [ $vgname  ];then
+	vgname=$vgname
+	echo "[已选]"
+else
+	vgname=vgspace
+	echo "[默认]"
+fi
+echo "卷组名为$vgname"
+
+
+if [ $lvname ];then
+	lvname=$lvname
+	echo "[已选]"
+else
+	lvname=lvsapce
+	echo "[默认]"
+fi
+echo "逻辑卷名为$lvname"
+
+
+if [ $1 ];then
+        dir=$1
+        echo "[已选]"
+else
+        dir=/www
+        echo "[默认]"
+fi
+echo "挂载硬盘至$dir"
+
+
+
 lvmpath=/dev/${vgname}/${lvname}
+
+
+#disk=/dev/sdb
+#if /www已经存在 需要询问是否覆盖
+#dir=/www
+
+#vgname=vgspace
+#lvname=lvspace
 
 
 #其实这里有点冗余. 可以不用设置这个.不过估计ubuntu可能会需要用到. 所以就加这么一段吧
