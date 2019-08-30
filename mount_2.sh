@@ -15,7 +15,8 @@ while [ -n "$1"  ]
 do
 	
 	case "$1" in 
-	-y) echo "静默模式";;
+	-y) echo "静默模式"
+		confirm=y;;
 	-d) echo "disk磁盘-> $2"
 		disk=$2
 		shift;;
@@ -90,6 +91,36 @@ lvmpath=/dev/${vgname}/${lvname}
 
 #vgname=vgspace
 #lvname=lvspace
+
+
+
+if [ -d  $dir   ];then
+	#$dir目录已经存在的情况
+	echo "$dir 目录已经存在,是否覆盖挂载上去 [y/n]"
+	#echo "$dir is exists!press [y/n] to overwrite this dir! "
+	
+	if [ "$confirm"x = "y"x ];then
+		echo "静默模式,skip input" 
+	else
+		read -n 1 -p "$dir is exists!press [y/n] to overwrite this dir!" confirm 
+	fi
+		
+	if [ "$confirm"x = "y"x  ];then 
+		echo "overwrite $dir now.覆盖该目录"		
+	else	
+		echo "cancel. 取消操作.(ERROR 2)"
+		exit 2 
+	fi
+
+else
+	mkdir $dir 
+fi
+
+
+
+
+
+
 
 
 #其实这里有点冗余. 可以不用设置这个.不过估计ubuntu可能会需要用到. 所以就加这么一段吧
