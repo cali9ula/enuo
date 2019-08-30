@@ -147,6 +147,8 @@ echo y|lvcreate -l 100%VG  -n $lvname $vgname
 
 echo y|mkfs.ext4 $lvmpath
 
+cp /etc/fstab /etc/fstab.bak
+
 echo "${lvmpath}	${dir}	ext4	defaults	0 0" >>/etc/fstab
 
 mount $lvmpath
