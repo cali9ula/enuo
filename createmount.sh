@@ -156,7 +156,9 @@ if [ $? -eq 0 ];then
 	exit 0
 else
 	echo "mount ${lvmpath} 命令失败.请手动检查问题"
-	exit 2
+	#挂载失败的情况下删除最后一行避免重启失败
+	sed -i '$d' /etc/fstab	
+	exit 3
 fi
 
 
