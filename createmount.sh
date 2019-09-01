@@ -7,11 +7,12 @@
 set -- `getopt  yd:v:l:m: "$@"`
 #y 无需确认
 #d disk 硬盘
-#p path 挂载的路径
 #v vgname
 #l lvname
 
-#m mvdir
+#m mvdir 将已存在的目录移动到磁盘中,并且挂载到参数给定目录
+#sh createmount.sh [options(-y -d /dev/sdb -v vgspace -l lvspace )] [parameter(/www)]
+
 
 while [ -n "$1"  ]
 do
