@@ -4,7 +4,7 @@
 
 
 
-set -- `getopt  yd:v:l:m "$@"`
+set -- `getopt  yd:v:l:m: "$@"`
 #y 无需确认
 #d disk 硬盘
 #p path 挂载的路径
@@ -33,8 +33,9 @@ do
 	# echo "lvname lv名 -> $2"
 		lvname=$2
 		shift;;
-	-m) echo "移动目录至硬盘"
+	-m) echo "移动$mvpath 至硬盘"
 		mvdir=y
+		mvpath=$2
 		shift;; 		
 
 	--)shift
@@ -90,12 +91,12 @@ echo "挂载硬盘至$dir"
 
 if [ "$mvdir"x = "y"x ];then
 	echo "[已选]"
-	tmp=/tmp$dir
+	tmp=/tmp$mvpath
 	mkdir -p $tmp	
 else
 	echo "[默认(不进行)]"
 fi
-echo "移动$dir 中的所有文件至硬盘并挂载"
+echo "移动$mvpath 中的所有文件至硬盘并挂载"
 
 
 
@@ -113,11 +114,11 @@ lvmpath=/dev/${vgname}/${lvname}
 
 if [ -d  $dir   ];then
 	if [ $tmp ];then
-		echo "正在将$dir 目录移动至硬盘[y/n]"
+		echo "正在将$mvpath 目录移动至硬盘[y/n]"
 		if [ "$confirm"x = "y"x ];then
 			echo "静默模式,skip input"
 		else
-			read -n 1 -p "mv $dir to $lvmpath now! press [y/n] to continue." confirm 
+			read -n 1 -p "mv $mvpath to $lvmpath now! press [y/n] to continue." confirm 
 		fi 
 	else
 		echo "$dir 目录已经存在,是否覆盖挂载上去 [y/n]"
@@ -130,7 +131,7 @@ if [ -d  $dir   ];then
 	fi	
 	
 	if [ "$confirm"x = "y"x  ];then 
-		echo "overwrite/move  $dir now.覆盖/移动该目录"		
+		echo "overwrite $dir /move  $mvpath now.覆盖/移动该目录"		
 	else	
 		echo "cancel. 取消操作.(ERROR 2)"
 		exit 2 
@@ -177,17 +178,16 @@ echo "${lvmpath}	${dir}	ext4	defaults	0 0" >>/etc/fstab
 
 if [ $tmp ];then
 	mount $lvmpath $tmp
-	cp $dir $tmp
-	echo "已将$dir 移动至$lvmpath 中,进行下一步"
+	mv  $mvpath $tmp
+	echo "已将$mvpath 移动至$lvmpath 中,进行下一步"
 	umount $lvmpath	
 fi
 	
 
-mount $lvmpath
-
+mount $lvmpath 
 
 if [ $? -eq 0 ];then
-	echo "成功把$lvmpath挂载至$dir"
+	echo "成功把$lvmpath 挂载至$dir"
 	exit 0
 else
 	echo "mount ${lvmpath} 命令失败.请手动检查问题"
