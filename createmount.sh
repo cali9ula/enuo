@@ -4,12 +4,14 @@
 
 
 
-set -- `getopt  yd:v:l: "$@"`
+set -- `getopt  yd:v:l:m "$@"`
 #y 无需确认
 #d disk 硬盘
 #p path 挂载的路径
 #v vgname
 #l lvname
+
+#m mvdir
 
 while [ -n "$1"  ]
 do
@@ -17,17 +19,24 @@ do
 	case "$1" in 
 	-y) echo "静默模式"
 		confirm=y;;
-	-d) echo "disk磁盘-> $2"
+	-d) 
+	#echo "disk磁盘-> $2"
 		disk=$2
 		shift;;
 	#-p) echo "path挂载路径-> $2"
 	#	shift;;
-	-v) echo "vgname vg名 -> $2"
+	-v)
+	# echo "vgname vg名 -> $2"
 		vgname=$2
 		shift;;
-	-l) echo "lvname lv名 -> $2"
+	-l)
+	# echo "lvname lv名 -> $2"
 		lvname=$2
 		shift;;
+	-m) echo "移动目录至硬盘"
+		mvdir=y
+		shift;; 		
+
 	--)shift
 		break;;
 
@@ -70,7 +79,6 @@ else
 fi
 echo "逻辑卷名为$lvname"
 
-
 if [ $1 ];then
         dir=$1
         echo "[已选]"
@@ -79,6 +87,15 @@ else
         echo "[默认]"
 fi
 echo "挂载硬盘至$dir"
+
+if [ "$mvdir"x = "y"x ];then
+	echo "[已选]"
+	tmp=/tmp$dir
+	mkdir -p $tmp	
+else
+	echo "[默认(不进行)]"
+fi
+echo "移动$dir 中的所有文件至硬盘并挂载"
 
 
 
@@ -95,18 +112,25 @@ lvmpath=/dev/${vgname}/${lvname}
 
 
 if [ -d  $dir   ];then
-	#$dir目录已经存在的情况
-	echo "$dir 目录已经存在,是否覆盖挂载上去 [y/n]"
-	#echo "$dir is exists!press [y/n] to overwrite this dir! "
-	
-	if [ "$confirm"x = "y"x ];then
-		echo "静默模式,skip input" 
+	if [ $tmp ];then
+		echo "正在将$dir 目录移动至硬盘[y/n]"
+		if [ "$confirm"x = "y"x ];then
+			echo "静默模式,skip input"
+		else
+			read -n 1 -p "mv $dir to $lvmpath now! press [y/n] to continue." confirm 
+		fi 
 	else
-		read -n 1 -p "$dir is exists!press [y/n] to overwrite this dir!" confirm 
-	fi
-		
+		echo "$dir 目录已经存在,是否覆盖挂载上去 [y/n]"
+	
+		if [ "$confirm"x = "y"x ];then
+			echo "静默模式,skip input" 
+		else
+			read -n 1 -p "$dir is exists!press [y/n] to overwrite this dir!" confirm 
+		fi
+	fi	
+	
 	if [ "$confirm"x = "y"x  ];then 
-		echo "overwrite $dir now.覆盖该目录"		
+		echo "overwrite/move  $dir now.覆盖/移动该目录"		
 	else	
 		echo "cancel. 取消操作.(ERROR 2)"
 		exit 2 
@@ -151,7 +175,16 @@ cp /etc/fstab /etc/fstab.bak
 
 echo "${lvmpath}	${dir}	ext4	defaults	0 0" >>/etc/fstab
 
+if [ $tmp ];then
+	mount $lvmpath $tmp
+	mv $dir $tmp
+	echo "已将$dir 移动至$lvmpath 中,进行下一步"
+	umount $lvmpath	
+fi
+	
+
 mount $lvmpath
+
 
 if [ $? -eq 0 ];then
 	echo "成功把$lvmpath挂载至$dir"
