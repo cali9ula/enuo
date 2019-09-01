@@ -74,7 +74,7 @@ if [ $lvname ];then
 	lvname=$lvname
 	echo "[已选]"
 else
-	lvname=lvsapce
+	lvname=lvspace
 	echo "[默认]"
 fi
 echo "逻辑卷名为$lvname"
@@ -177,7 +177,7 @@ echo "${lvmpath}	${dir}	ext4	defaults	0 0" >>/etc/fstab
 
 if [ $tmp ];then
 	mount $lvmpath $tmp
-	mv $dir $tmp
+	cp $dir $tmp
 	echo "已将$dir 移动至$lvmpath 中,进行下一步"
 	umount $lvmpath	
 fi
