@@ -179,7 +179,7 @@ echo "${lvmpath}	${dir}	ext4	defaults	0 0" >>/etc/fstab
 
 if [ $tmp ];then
 	mount $lvmpath $tmp
-	mv -f  $mvpath/* $tmp
+	mv -f  ${mvpath$*/}/* $tmp
 	echo "已将$mvpath 移动至$lvmpath 中,进行下一步"
 	umount $lvmpath	
 fi
