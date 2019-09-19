@@ -6,7 +6,13 @@ DEFINE="20"
 
 # hostpath 黑白名单的根目录
 hostpath="/etc/script/hosts"
-mkdir -v $hostpath >/dev/null
+#mkdir -v $hostpath >/dev/null
+if [ ! -d $hostpath ] ;then
+	mkdir $hostpath
+else
+	echo $hostpath exits.
+fi
+
 
 # blackpath whitepath 即指向白名单黑名单所在位置
 blackpath="$hostpath/black.txt"
