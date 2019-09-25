@@ -1,4 +1,5 @@
 #! /bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # 该脚本用于屏蔽多次登录失败的ip.
 # 注意! 若一个ip成功登录过.就会加入白名单.以避免误伤
 # Define 参数为登录失败次数.登录失败超过这个次数就会加入黑名单
