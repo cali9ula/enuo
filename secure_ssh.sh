@@ -9,7 +9,7 @@ DEFINE="20"
 hostpath="/etc/script/hosts"
 #mkdir -v $hostpath >/dev/null
 if [ ! -d $hostpath ] ;then
-	mkdir $hostpath
+	mkdir $hostpath -p
 else
 	echo $hostpath exits.
 fi
