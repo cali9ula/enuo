@@ -5,6 +5,14 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # Define 参数为登录失败次数.登录失败超过这个次数就会加入黑名单
 DEFINE="20"
 
+
+
+grep "secure_ssh.sh" /etc/fstab
+if [ $? -ne 0 ] ; then
+	nowdir=$(cd `dirname $0`; pwd)
+	echo  "*/15 * * * * root sh $nowdir/secure_ssh.sh ; echo \`date\` $?  >>/etc/crontab.log">> /etc/crontab
+fi
+
 # hostpath 黑白名单的根目录
 hostpath="/etc/script/hosts"
 #mkdir -v $hostpath >/dev/null
