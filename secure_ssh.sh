@@ -10,7 +10,7 @@ DEFINE="20"
 grep "secure_ssh.sh" /etc/fstab
 if [ $? -ne 0 ] ; then
 	nowdir=$(cd `dirname $0`; pwd)
-	echo  "*/15 * * * * root sh $nowdir/secure_ssh.sh ; echo \`date\` $?  >>/etc/crontab.log">> /etc/crontab
+	echo  "*/15 * * * * root sh $nowdir/$(basename $0) ; echo $?  \`date\`  >>/etc/crontab.log">> /etc/crontab
 fi
 
 # hostpath 黑白名单的根目录
