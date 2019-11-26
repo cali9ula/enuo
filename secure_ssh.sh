@@ -7,7 +7,7 @@ DEFINE="20"
 
 
 
-grep "secure_ssh.sh" /etc/fstab
+grep "secure_ssh.sh" /etc/crontab
 if [ $? -ne 0 ] ; then
 	nowdir=$(cd `dirname $0`; pwd)
 	echo  "*/15 * * * * root sh $nowdir/$(basename $0) ; echo $?  \`date\`  >>/etc/crontab.log">> /etc/crontab
